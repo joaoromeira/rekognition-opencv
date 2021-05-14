@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  ms_recognition:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./:/app"
+    ports:
+      - "8000:8000"

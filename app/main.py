@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import cv2 as cv
 import sys
 from base64 import b64decode, b64encode
@@ -15,21 +16,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=[
-        "Access-Control-Allow-Headers",
-        "Origin",
-        "Accept",
-        "X-Requested-With",
-        "Content-Type",
-        "Access-Control-Request-Method",
-        "Access-Control-Request-Headers",
-        "Access-Control-Allow-Origin",
-        "Access-Control-Allow-Methods"
-        "Authorization",
-        "X-Amz-Date",
-        "X-Api-Key",
-        "X-Amz-Security-Token"
-    ]
+    allow_headers=["*"],
 )
 
 
@@ -38,11 +25,15 @@ def index():
     return {"API Version V1.0.0"}
 
 
-@app.post("/rekognition/faces")
-def face_rekognition(base64: str):
-    try:
-        type, base = base64.split(',')
+class FaceRecognition(BaseModel):
+    base64: str
 
+
+@app.post("/recognition/faces")
+def face_recognition(data: FaceRecognition):
+    try:
+        type, base = data.base64.split(',')
+        print(type)
         img_bytes = b64decode(base, validate=True)
         img_unit = np.fromstring(img_bytes, np.uint8)
         img_np = cv.imdecode(img_unit, cv.IMREAD_COLOR)
@@ -59,9 +50,9 @@ def face_rekognition(base64: str):
         pic_str = b64encode(buffer)
         pic_str = pic_str.decode()
 
-        return jsonify({
+        return {
             "base64": type+','+pic_str
-        })
+        }
     except:
         print("Unexpected error:", sys.exc_info()[0])
 

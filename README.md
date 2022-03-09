@@ -1,8 +1,4 @@
-# MS Recognition
-
-![Logo](./.github/provi.svg)
-
-## The "ms_recognition" is a microservice that is responsible for dealing AI in images
+# Recognition OpenCV
 
 ## Content
 
